@@ -14,14 +14,25 @@ admin.initializeApp({
 })
 
 const app = express()
-// middleware
+//---------- MIDDLEWARES
+const allowedOrigins = [
+  "http://localhost:5173",
+   "https://plant-net-client-snowy.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [process.env.CLIENT_DOMAIN],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    optionSuccessStatus: 200,
   })
-)
+);
 app.use(express.json())
 
 // jwt middlewares
